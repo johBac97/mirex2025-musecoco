@@ -1,0 +1,13 @@
+mir_eval
+music21
+pretty_midi
+miditoolkit==1.0.1
+tokenizers==0.15.1
+transformers==4.39.3
+torch==2.4.1
+numpy
+lightning==2.3.3
+peft==0.11.1
+pytorch-fast-transformers
+absl-py
+msgpack

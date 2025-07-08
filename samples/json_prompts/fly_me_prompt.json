@@ -1,0 +1,154 @@
+{
+  "prompt": [
+    {
+      "start": 16,
+      "pitch": 72,
+      "duration": 6
+    },
+    {
+      "start": 16,
+      "pitch": 57,
+      "duration": 14
+    },
+    {
+      "start": 16,
+      "pitch": 64,
+      "duration": 14
+    },
+    {
+      "start": 16,
+      "pitch": 60,
+      "duration": 14
+    },
+    {
+      "start": 22,
+      "pitch": 71,
+      "duration": 2
+    },
+    {
+      "start": 24,
+      "pitch": 69,
+      "duration": 2
+    },
+    {
+      "start": 26,
+      "pitch": 67,
+      "duration": 4
+    },
+    {
+      "start": 30,
+      "pitch": 65,
+      "duration": 12
+    },
+    {
+      "start": 30,
+      "pitch": 50,
+      "duration": 18
+    },
+    {
+      "start": 30,
+      "pitch": 60,
+      "duration": 18
+    },
+    {
+      "start": 30,
+      "pitch": 57,
+      "duration": 18
+    },
+    {
+      "start": 42,
+      "pitch": 67,
+      "duration": 2
+    },
+    {
+      "start": 44,
+      "pitch": 69,
+      "duration": 2
+    },
+    {
+      "start": 46,
+      "pitch": 72,
+      "duration": 2
+    },
+    {
+      "start": 48,
+      "pitch": 62,
+      "duration": 4
+    },
+    {
+      "start": 48,
+      "pitch": 67,
+      "duration": 4
+    },
+    {
+      "start": 48,
+      "pitch": 53,
+      "duration": 6
+    },
+    {
+      "start": 48,
+      "pitch": 71,
+      "duration": 4
+    },
+    {
+      "start": 48,
+      "pitch": 43,
+      "duration": 6
+    },
+    {
+      "start": 52,
+      "pitch": 69,
+      "duration": 4
+    },
+    {
+      "start": 54,
+      "pitch": 53,
+      "duration": 10
+    },
+    {
+      "start": 56,
+      "pitch": 67,
+      "duration": 2
+    },
+    {
+      "start": 56,
+      "pitch": 62,
+      "duration": 2
+    },
+    {
+      "start": 56,
+      "pitch": 59,
+      "duration": 2
+    },
+    {
+      "start": 58,
+      "pitch": 65,
+      "duration": 6
+    },
+    {
+      "start": 64,
+      "pitch": 55,
+      "duration": 10
+    },
+    {
+      "start": 64,
+      "pitch": 64,
+      "duration": 10
+    },
+    {
+      "start": 64,
+      "pitch": 59,
+      "duration": 10
+    },
+    {
+      "start": 64,
+      "pitch": 48,
+      "duration": 16
+    },
+    {
+      "start": 74,
+      "pitch": 58,
+      "duration": 6
+    }
+  ]
+}
