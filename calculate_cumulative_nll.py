@@ -1,11 +1,10 @@
 import sys
 import torch
-import json
 import argparse
 
 from pathlib import Path
-from music_json_convert import json_dict_to_note_matrix, note_matrix_to_midi
 from utils_midi.utils_midi import RemiTokenizer
+from music_json_convert import json_prompt_to_midi
 
 sys.path.insert(0, str(Path("./transformers/src").resolve()))
 from transformers import MuseCocoConfig, MuseCocoTokenizer, MuseCocoLMHeadModel
@@ -79,7 +78,6 @@ ATTRIBUTE_PROMPT = [
 
 
 def __parse_args():
-    pass
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -90,6 +88,7 @@ def __parse_args():
 
     parser.add_argument("generation", help="Generation JSON file.", type=Path)
 
+    parser.add_argument("prompt", help="Prompt JSON file.", type=Path)
     return parser.parse_args()
 
 
@@ -107,40 +106,53 @@ def main():
 
     remi_tokenizer = RemiTokenizer()
 
-    # Load the json formatted generation of the model
-    with args.generation.open() as io:
-        generation = json.load(io)
+    TEMP_MIDI_FOLDER = Path.cwd() / "temp_midi"
+    TEMP_MIDI_FOLDER.mkdir(exist_ok=True)
 
-    # Convert the generation from json start/end/duration format into a note matrix (numpy)
-    generation_notes = json_dict_to_note_matrix(generation, "generation")
-
-    TEMP_MIDI_PATH = Path.cwd() / "temp.midi"
-
-    # Convert the note matrix into a MIDI file
-    note_matrix_to_midi(generation_notes, str(TEMP_MIDI_PATH))
-
-    # Tokenize the MIDI file using the REMI Tokenizer
-    remi_tokens = remi_tokenizer.midi_to_remi(
-        str(TEMP_MIDI_PATH), False, include_tempo=True, include_velocity=True
+    # Load the generation, transform into note matrix and then serialize to MIDI file.
+    generation_midi_path = TEMP_MIDI_FOLDER / "generation.midi"
+    json_prompt_to_midi(
+        args.generation, str(generation_midi_path), keyword="generation"
     )
 
-    # Construct the input string from the ATTRIBUTE_PROMPT (settings for the generation) and remi_tokens
-    input_str = " ".join(ATTRIBUTE_PROMPT + ["<sep>"] + remi_tokens)
+    # Tokenizer the generation MIDI file using the REMI tokenizer
+    remi_tokens_generation = remi_tokenizer.midi_to_remi(
+        str(generation_midi_path), False, include_tempo=True, include_velocity=True
+    )
+
+    # Load the prompt, transform into note matrix and then serialize to MIDI file.
+    prompt_midi_path = TEMP_MIDI_FOLDER / "prompt.midi"
+    json_prompt_to_midi(args.prompt, str(prompt_midi_path))
+
+    remi_tokens_prompt = remi_tokenizer.midi_to_remi(
+        str(prompt_midi_path), False, include_tempo=True, include_velocity=True
+    )
+
+    # Construct the input string from the ATTRIBUTE_PROMPT (settings for the generation)
+    # the prompt that was used to create the generation, then finaly the generation itself.
+    input_str = " ".join(
+        ATTRIBUTE_PROMPT + ["<sep>"] + remi_tokens_prompt + remi_tokens_generation
+    )
     input_ids = tokenizer(input_str, return_tensors="pt")["input_ids"].cuda()
 
     # Why is this done? Prepending the final token? Shouldn't this be handled by the tokenizer?
     input_ids = torch.cat([input_ids[:, -1:], input_ids[:, :-1]], dim=1)
 
+    prompt_token_length = len(ATTRIBUTE_PROMPT + ["<sep>"] + remi_tokens_prompt) + 1
+
+    labels = input_ids.clone()
+    # Mask the prompt tokens
+    labels[:, :prompt_token_length] = -100
+
     with torch.no_grad():
-        outputs = model(input_ids, labels=input_ids)
+        outputs = model(input_ids, labels=labels)
 
-        # Averaged over all tokens
-        ce_loss = outputs.loss
+    avg_nll = outputs.loss
 
-    # Number of predicted tokens is shape of input_ids - 1 due to first token having no prediction.
-    nll_loss = ce_loss * (input_ids.shape[-1] - 1)
+    number_generation_tokens = input_ids.size(1) - prompt_token_length
+    cumulative_nll = avg_nll * number_generation_tokens
 
-    print(f"Cumulative Negative Likelihood:\t{nll_loss}")
+    print(f"Cumulative Negative Likelihood:\t{cumulative_nll}")
 
 
 if __name__ == "__main__":

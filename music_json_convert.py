@@ -7,11 +7,13 @@ def note_matrix_to_json_dict(note_matrix, key_name):
     notes = []
     for row in note_matrix:
         start, pitch, duration = row
-        notes.append({
-            "start": int(start * 4),
-            "pitch": int(pitch),
-            "duration": int(duration * 4)
-        })
+        notes.append(
+            {
+                "start": int(start * 4),
+                "pitch": int(pitch),
+                "duration": int(duration * 4),
+            }
+        )
     return {key_name: notes}
 
 
@@ -62,13 +64,15 @@ def midi_to_note_matrix(input_midi_fn):
 
 def note_matrix_to_midi(note_matrix, output_midi_fn, bpm=90, vel=80):
     midi = pm.PrettyMIDI(initial_tempo=bpm)
-    instrument = pm.Instrument(program=0) 
+    instrument = pm.Instrument(program=0)
 
     for note in note_matrix:
         start, pitch, duration = note
         start_time = float(start) * 60 / bpm
         end_time = float(start + duration) * 60 / bpm
-        note = pm.Note(velocity=int(vel), pitch=int(pitch), start=start_time, end=end_time)
+        note = pm.Note(
+            velocity=int(vel), pitch=int(pitch), start=start_time, end=end_time
+        )
         instrument.notes.append(note)
 
     midi.instruments.append(instrument)
@@ -77,11 +81,13 @@ def note_matrix_to_midi(note_matrix, output_midi_fn, bpm=90, vel=80):
 
 def midi_prompt_to_json(input_midi_fn, output_json_fn):
     note_matrix = midi_to_note_matrix(input_midi_fn)
-    json_dict = note_matrix_to_json_dict(note_matrix, 'prompt')
+    json_dict = note_matrix_to_json_dict(note_matrix, "prompt")
     write_json_dict(json_dict, output_json_fn)
 
 
-def json_prompt_to_midi(input_json_fn, output_midi_fn, bpm=90, vel=80):
+def json_prompt_to_midi(
+    input_json_fn, output_midi_fn, bpm=90, vel=80, keyword="prompt"
+):
     json_dict = read_json_dict(input_json_fn)
-    note_matrix = json_dict_to_note_matrix(json_dict, 'prompt')
+    note_matrix = json_dict_to_note_matrix(json_dict, keyword)
     note_matrix_to_midi(note_matrix, output_midi_fn, bpm=bpm, vel=vel)
