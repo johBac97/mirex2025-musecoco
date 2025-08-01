@@ -137,7 +137,8 @@ def main():
         # Averaged over all tokens
         ce_loss = outputs.loss
 
-    nll_loss = ce_loss * input_ids.shape[-1]
+    # Number of predicted tokens is shape of input_ids - 1 due to first token having no prediction.
+    nll_loss = ce_loss * (input_ids.shape[-1] - 1)
 
     print(f"Cumulative Negative Likelihood:\t{nll_loss}")
 
