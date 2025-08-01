@@ -40,7 +40,7 @@ $^*$ Attributes in MuseCoco are set to support 16-bar piano music generation as 
 ## Calculate NLL Of Generation
 
 ```
-python calculate_cumulative_nll.py <PATH-TO-MODEL-ROOT> <PATH-TO-GENERATION-JSON>
+python calculate_cumulative_nll.py <PATH-TO-MODEL-ROOT> <PATH-TO-GENERATION-JSON> <PATH-TO-PROMPT-JSON>
 ```
 
-Where `<PATH-TO-MODEL-ROOT>` is the path to the root of the checkpoint folder containing both the model and the tokenizer as subfolders, (`.../model_and_tokenizer/200m/`). `<PATH-TO-GENERATION-JSON>` is the path to the generated output from the model in json format.
+Where `<PATH-TO-MODEL-ROOT>` is the path to the root of the checkpoint folder containing both the model and the tokenizer as subfolders, (`.../model_and_tokenizer/200m/`). `<PATH-TO-GENERATION-JSON>` is the path to the generated output from the model in json format. Finaly, the `<PATH-TO-PROMPT-JSON>` is the path to the prompt that was used to generate the generation.
